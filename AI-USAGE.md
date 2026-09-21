@@ -19,6 +19,16 @@ At least six entries. One per real use. Every entry needs a commit link.
 - **What I kept, what I changed, and why:**
 - **Commit:** https://github.com/YOUR-USERNAME/YOUR-REPO/commit/SHA
 
+### 2026-09-21 - Transition for Navigation Bar
+
+- **Tool: ChatGPT**
+- **What I asked for: To add transition when the background colors appear.**
+- **What it gave back: .nav li {
+  transition: background-color 0.3s ease, border-radius 0.3s ease;
+}**
+- **What I kept, what I changed, and why: I kept the whole thing, since it added what I needed.**
+- **Commit:** https://github.com/Kish-Mnlo/final-project-MANALO/commit/6dfef89fcd864bd5e173ae6ab8c45e3a8f333f44
+
 ## 2. Where the AI got it wrong
 
 Three cases. Be specific. If you write that the AI was never wrong, this section

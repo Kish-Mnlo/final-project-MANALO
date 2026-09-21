@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Artworks from './pages/Artworks'
 import Commission from './pages/Commission'
 import Contact from './pages/Contact'
+import Footer from './Footer'
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </div>
+      <Footer />
     </>
   )
 }
