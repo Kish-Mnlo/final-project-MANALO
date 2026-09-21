@@ -1,3 +1,3 @@
 export default function Commission() {
-    return <h2>Commission</h2>
+    return <h2>Commission Services</h2>
 }
