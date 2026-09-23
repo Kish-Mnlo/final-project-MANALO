@@ -1,12 +1,12 @@
-# Your Project Name
+# Artwork Showcase Portfolio
 
 > **Replace this whole file.** It is a worked example of the README your project
 > will be graded from, not a file to leave as it is. Start with
 > [START-HERE.md](START-HERE.md).
 
-One sentence saying what this does and who it is for.
+This is to showcase my artwork and commission services.
 
-**Live site:** https://yourusername.github.io/your-repo-name/
+**Live site:** https://github.com/Kish-Mnlo/final-project-MANALO
 **API:** https://your-api.onrender.com/healthz
 **Demo video:** (link)
 
@@ -18,9 +18,10 @@ One sentence saying what this does and who it is for.
 
 ## What it does
 
-- Report a sighting with a place, a description and a spookiness rating
-- Browse everything reported, newest first
-- Delete a report
+- Add an artwork to showcase
+- Browse every artwork added, newest first
+- Delete an artwork added
+- View commission services
 
 ## Built with
 
@@ -146,10 +147,14 @@ where each one is hosted.
 ## What I would do next
 
 Three honest bullets. This paragraph is worth more than it looks.
+- Enhance the design of the website
+- Figure out more features to be added for interaction? Maybe add a queue 
 
 ## Author
 
-Your name, and a link. Course and section.
+Manalo, Kisha Margarette B. 
+https://github.com/Kish-Mnlo 
+CS - 403
 
 ## Licence
 
