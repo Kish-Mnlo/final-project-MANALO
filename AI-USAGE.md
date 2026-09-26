@@ -29,6 +29,14 @@ At least six entries. One per real use. Every entry needs a commit link.
 - **What I kept, what I changed, and why: I kept the whole thing, since it added what I needed.**
 - **Commit:** https://github.com/Kish-Mnlo/final-project-MANALO/commit/6dfef89fcd864bd5e173ae6ab8c45e3a8f333f44
 
+### 2026-09-27 - Create the Front-end for Services
+
+- **Tool: Claude** 
+- **What I asked for: how to do the front-end with adding, updating, editing, and deleting of services cards**
+- **What it gave back: The edited versions of the styles.css and commissions.jsx files to incorporate the api and gether the info from the serviceSeed.json**
+- **What I kept, what I changed, and why: I kept the essentials of the form and basically changed the design of it all. The css of course to fit the theme.**
+- **Commit:** 
+
 ## 2. Where the AI got it wrong
 
 Three cases. Be specific. If you write that the AI was never wrong, this section
@@ -50,6 +58,22 @@ it in your own words.
 > handle as the heading. You are graded on your own section.
 
 ### Written by me
+
+- **File: categoryRepo.js**
+- **Commit:** https://github.com/Kish-Mnlo/final-project-MANALO/commit/c5e5c423dbe2c2940aeb2b38db3d2cc51996fd3f
+- **What it does and why it is built this way: This is for the queries for the category table. I added a getByName function to be able to validate if the name of the category already exists.**
+
+- **File: artworksRepo.js**
+- **Commit:** https://github.com/Kish-Mnlo/final-project-MANALO/commit/49216c60f2f608d26d0c006e587dd691b71bb691
+- **What it does and why it is built this way: This is for the queries for the artwork table. It is essentially the same way from the sightings example given and was used as a template.**
+
+- **File: serviceRepo.js**
+- **Commit:** https://github.com/Kish-Mnlo/final-project-MANALO/commit/f9411a92b7495f5f1af622cf102f278fd509789f
+- **What it does and why it is built this way: This is for the queries for the service table. It is the same way with the sightings example and was used as a template.**
+
+- **File:**
+- **Commit:**
+- **What it does and why it is built this way:**
 
 - **File:**
 - **Commit:**
