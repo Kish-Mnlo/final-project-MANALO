@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import { pool } from './db/pool.js'
 import * as sightings from './sightingsRepo.js'
+import * as category from './categoryRepo.js'
 
 const app = express()
 
@@ -38,9 +39,13 @@ app.get('/readyz', async (request, response) => {
 
 // Validation lives on the server because the client can be bypassed. The
 // browser form is for a fast, friendly message; this is for correctness.
-function validateCategory(body) {
+async function validateCategory(body) {
   const errors = []
   const category_name = typeof body.category_name === 'string' ? body.category_name.trim() : ''
+
+  const existing = await category.getByName(pool, body.category_name)
+  if (existing.rows.length > 0) errors.push('Category name already exists.')
+  if (!category_name) errors.push('Name is required.')
 }
 
 function validate(body) {
