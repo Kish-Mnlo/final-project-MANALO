@@ -22,9 +22,10 @@ export async function getById(pool, id) {
     return result.rows[0] ?? null
 }
 
+//added for validation of existing category name??
 export async function getByName(pool, category_name) {
     const result = await pool.query(
-        'SELECT * FROM category WHERE category_name = $1',
+        'SELECT * FROM category WHERE category_name ILIKE $1',
         [category_name]
     )
 

@@ -46,6 +46,25 @@ async function validateCategory(body) {
   const existing = await category.getByName(pool, body.category_name)
   if (existing.rows.length > 0) errors.push('Category name already exists.')
   if (!category_name) errors.push('Name is required.')
+
+    return { errors, value: { category_name } }
+}
+
+async function validateArtwork(body) {
+  const errors = []
+  const name = typeof body.name === 'string' ? body.name.trim() : ''
+  const category_id = Number(body.category_id)
+  const date_made = typeof body.date_made === 'string' ? /^\d{4}-\d{2}-\d{2}$/.test(date_made) : ''
+  const description =
+    typeof body.description === 'string' ? body.description.trim() : ''
+  
+  if (!name) errors.push('Name of Artwork is required.')
+  if (!Number.isInteger(category_id)) errors.push('Category ID must be an integer.')
+  if (!date_made) errors.push('Date is required.')
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date_made)) errors.push('Date must be in YYYY-MM-DD format.')
+  if (new Date(date_made) > new Date()) errors.push('Date cannot be in the future.')
+
+  return { errors, value: { name, category_id, date_made, description } }
 }
 
 function validate(body) {
