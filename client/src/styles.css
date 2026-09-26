@@ -100,3 +100,189 @@ footer h3 {
   background-color: #6952c5;
   border-radius: 5px;
 }
+
+/* --- Services (Commission page) --- */
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.service-card {
+  background: #FFFFFF;
+  border: 1px solid #E6C0CB;
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 6px 14px rgba(32, 30, 44, 0.1);
+  text-align: left;
+}
+
+.service-card h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #201E2C;
+  margin: 0;
+}
+
+.service-card p {
+  font-size: 0.9rem;
+  color: #4a4757;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.service-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.btn {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.btn--primary {
+  background-color: #F08FAE;
+  color: #201E2C;
+}
+
+.btn--primary:hover {
+  background-color: #E6C0CB;
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: #201E2C;
+  color: #201E2C;
+}
+
+.btn--ghost:hover {
+  background-color: #201E2C;
+  color: #fff;
+}
+
+.btn--danger {
+  background: transparent;
+  border: 1px solid #201E2C;
+  color: #201E2C;
+}
+
+.btn--danger:hover {
+  background-color: #201E2C;
+  color: #F08FAE;
+}
+
+/* --- Add/Edit modal (ServiceForm) --- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(32, 30, 44, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 10;
+}
+
+.modal {
+  background: #FFFFFF;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  text-align: left;
+  box-shadow: 0 10px 30px rgba(32, 30, 44, 0.25);
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.modal__header h2 {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #201E2C;
+  margin: 0;
+}
+
+.modal__close {
+  border: none;
+  background: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #4a4757;
+}
+
+.modal__close:hover {
+  color: #201E2C;
+}
+
+.modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: #4a4757;
+  text-align: left;
+}
+
+.field input,
+.field select,
+.field textarea {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.95rem;
+  color: #201E2C;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #E6C0CB;
+  border-radius: 5px;
+  background: #fff;
+  resize: vertical;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: #F08FAE;
+  box-shadow: 0 0 0 3px rgba(240, 143, 174, 0.25);
+}
+
+.field-error {
+  color: #c0395a;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
