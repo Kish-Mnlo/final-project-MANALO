@@ -1,8 +1,9 @@
 import express from 'express'
 import cors from 'cors'
 import { pool } from './db/pool.js'
-import * as sightings from './sightingsRepo.js'
 import * as category from './categoryRepo.js'
+import * as artwork from './artworksRepo.js'
+import * as service from './serviceRepo.js'
 
 const app = express()
 
@@ -67,77 +68,181 @@ async function validateArtwork(body) {
   return { errors, value: { name, category_id, date_made, description } }
 }
 
-function validate(body) {
+async function validateService(body) {
   const errors = []
-  const place = typeof body.place === 'string' ? body.place.trim() : ''
-  const description =
-    typeof body.description === 'string' ? body.description.trim() : ''
-  const spookiness = Number(body.spookiness)
+  const name = typeof body.name === 'string' ? body.name.trim() : ''
+  const description = typeof body.description == 'string' ? body.description.trim() : ''
 
-  if (!place) errors.push('place is required')
-  if (place.length > 120) errors.push('place must be 120 characters or fewer')
-  if (description.length > 2000) errors.push('description must be 2000 characters or fewer')
-  if (!Number.isInteger(spookiness) || spookiness < 1 || spookiness > 5) {
-    errors.push('spookiness must be a whole number from 1 to 5')
-  }
+  if (!name) errors.push('Name is required.')
+  if (!description) errors.push('Description is required.')
 
-  return { errors, value: { place, description, spookiness } }
+    return { errors, value: { name, description } }
 }
 
-app.get('/api/sightings', async (request, response, next) => {
+// category routes
+
+app.get('/api/category', async (req, res, next) => {
   try {
-    response.json(await sightings.getAll(pool))
+    res.json(await category.getAll(pool))
   } catch (error) {
     next(error)
   }
 })
 
-app.get('/api/sightings/:id', async (request, response, next) => {
+app.get('/api/category/:id', async (req, res, next) => {
   try {
-    const row = await sightings.getById(pool, request.params.id)
-    if (!row) return response.status(404).json({ error: 'Not found' })
+    const row = await category.getById(pool, req.params.id)
+    if (!row) return res.status(404).json({ error: 'Not found' })
+    res.json(row)
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.post('/api/category', async (req, res, next) => {
+  const { errors, value } = validateCategory(request.body ?? {})
+  if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+
+  try {
+    res.status(201).json(await category.create(pool, value))
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.put('/api/category/:id', async (req, res, next) => {
+  const { errors, value } = validateCategory(req.body ?? {})
+  if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+
+  try {
+    const row = await category.update(pool, req.params.id, value)
+    if (!row) return res.status(404).json({ error: 'Not found' })
+    res.json(row)
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.delete('/api/category/:id', async (req, res, next) => {
+  try {
+    const removed = await category.remove(pool, req.params.id)
+    if (!removed) return res.status(404).json({ error: 'Not found' })
+    res.status(204).end()
+  } catch (error) {
+    next(error)
+  }
+})
+
+// service routes
+
+app.get('/api/service', async (req, res, next) => {
+  try {
+    res.json(await service.getAll(pool))
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.get('/api/service/:id', async (req, res, next) => {
+  try {
+    const row = await service.getById(pool, req.params.id)
+    if (!row) return res.status(404).json({ error: 'Not found' })
+    res.json(row)
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.post('/api/service', async (req, res, next) => {
+  const { errors, value } = validateService(request.body ?? {})
+  if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+
+  try {
+    res.status(201).json(await service.create(pool, value))
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.put('/api/service/:id', async (req, res, next) => {
+  const { errors, value } = validateService(req.body ?? {})
+  if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+
+  try {
+    const row = await service.update(pool, req.params.id, value)
+    if (!row) return res.status(404).json({ error: 'Not found' })
+    res.json(row)
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.delete('/api/service/:id', async (req, res, next) => {
+  try {
+    const removed = await service.remove(pool, req.params.id)
+    if (!removed) return res.status(404).json({ error: 'Not found' })
+    res.status(204).end()
+  } catch (error) {
+    next(error)
+  }
+})
+
+// artwork routes
+
+app.get('/api/artwork', async (req, res, next) => {
+  try {
+    res.json(await artwork.getAll(pool))
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.get('/api/artwork/:id', async (req, res, next) => {
+  try {
+    const row = await artwork.getById(pool, req.params.id)
+    if (!row) return res.status(404).json({ error: 'Not found' })
+    res.json(row)
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.post('/api/artwork', async (req, res, next) => {
+  const { errors, value } = validateArtwork(req.body ?? {})
+  if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+
+  try {
+    res.status(201).json(await artwork.create(pool, value))
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.put('/api/artwork/:id', async (req, res, next) => {
+  const { errors, value } = validateArtwork(req.body ?? {})
+  if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+
+  try {
+    const row = await artwork.update(pool, req.params.id, value)
+    if (!row) return res.status(404).json({ error: 'Not found' })
     response.json(row)
   } catch (error) {
     next(error)
   }
 })
 
-app.post('/api/sightings', async (request, response, next) => {
-  const { errors, value } = validate(request.body ?? {})
-  if (errors.length > 0) return response.status(400).json({ error: errors.join('; ') })
-
+app.delete('/api/artwork/:id', async (req, res, next) => {
   try {
-    response.status(201).json(await sightings.create(pool, value))
+    const removed = await artwork.remove(pool, req.params.id)
+    if (!removed) return res.status(404).json({ error: 'Not found' })
+    res.status(204).end()
   } catch (error) {
     next(error)
   }
 })
 
-app.put('/api/sightings/:id', async (request, response, next) => {
-  const { errors, value } = validate(request.body ?? {})
-  if (errors.length > 0) return response.status(400).json({ error: errors.join('; ') })
-
-  try {
-    const row = await sightings.update(pool, request.params.id, value)
-    if (!row) return response.status(404).json({ error: 'Not found' })
-    response.json(row)
-  } catch (error) {
-    next(error)
-  }
-})
-
-app.delete('/api/sightings/:id', async (request, response, next) => {
-  try {
-    const removed = await sightings.remove(pool, request.params.id)
-    if (!removed) return response.status(404).json({ error: 'Not found' })
-    response.status(204).end()
-  } catch (error) {
-    next(error)
-  }
-})
-
-app.use((request, response) => {
-  response.status(404).json({ error: 'No such route' })
+app.use((req, res) => {
+  res.status(404).json({ error: 'No such route' })
 })
 
 // The detail goes in your logs; the visitor gets a plain message. Sending a

@@ -17,13 +17,13 @@ CREATE TABLE IF NOT EXISTS artwork (
   category_id INTEGER     NOT NULL REFERENCES category(id), 
   date_made   DATE        NOT NULL,
   description TEXT        NOT NULL DEFAULT '',
-  image_path  TEXT        NOT NULL,
+  image_path  TEXT        NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS service (
   id          SERIAL PRIMARY KEY,
   name        TEXT        NOT NULL,
-  description TEXT        NOT NULL DEFAULT '',
+  description TEXT        NOT NULL DEFAULT ''
 );
 
 -- The list page always sorts newest first. Without this the database reads
