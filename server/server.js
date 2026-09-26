@@ -38,6 +38,11 @@ app.get('/readyz', async (request, response) => {
 
 // Validation lives on the server because the client can be bypassed. The
 // browser form is for a fast, friendly message; this is for correctness.
+function validateCategory(body) {
+  const errors = []
+  const category_name = typeof body.category_name === 'string' ? body.category_name.trim() : ''
+}
+
 function validate(body) {
   const errors = []
   const place = typeof body.place === 'string' ? body.place.trim() : ''

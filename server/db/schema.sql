@@ -6,15 +6,27 @@
 -- rather than by connecting to a server. It is also what lets you move to a
 -- hosted database in one command.
 
-CREATE TABLE IF NOT EXISTS sightings (
+CREATE TABLE IF NOT EXISTS category (
+  id            SERIAL PRIMARY KEY,
+  category_name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS artwork (
   id          SERIAL PRIMARY KEY,
-  place       TEXT        NOT NULL,
+  name        TEXT        NOT NULL,
+  category_id INTEGER     NOT NULL REFERENCES category(id), 
+  date_made   DATE        NOT NULL,
   description TEXT        NOT NULL DEFAULT '',
-  spookiness  INTEGER     NOT NULL CHECK (spookiness BETWEEN 1 AND 5),
-  reported_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  image_path  TEXT        NOT NULL,
+);
+
+CREATE TABLE IF NOT EXISTS service (
+  id          SERIAL PRIMARY KEY,
+  name        TEXT        NOT NULL,
+  description TEXT        NOT NULL DEFAULT '',
 );
 
 -- The list page always sorts newest first. Without this the database reads
 -- every row and sorts it on each request.
-CREATE INDEX IF NOT EXISTS sightings_reported_at_idx
-  ON sightings (reported_at DESC);
+CREATE INDEX IF NOT EXISTS artwork_date_made_idx
+  ON artwork (date_made DESC, id DESC);
