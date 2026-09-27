@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS category (
 CREATE TABLE IF NOT EXISTS artwork (
   id          SERIAL PRIMARY KEY,
   name        TEXT        NOT NULL,
-  category_id INTEGER     NOT NULL REFERENCES category(id), 
+  category_id INTEGER     NOT NULL REFERENCES category(id) ON DELETE CASCADE, 
   date_made   DATE        NOT NULL,
   description TEXT        NOT NULL DEFAULT '',
   image_path  TEXT        NOT NULL

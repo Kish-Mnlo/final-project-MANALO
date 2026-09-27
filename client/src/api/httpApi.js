@@ -26,6 +26,23 @@ async function request(path, options) {
   return response.status === 204 ? null : response.json()
 }
 
+async function requestForm(path, options) {
+  const response = await fetch(`${BASE}${path}`, options)
+
+  if (!response.ok) {
+    let message = `${response.status} ${response.statusText}`
+    try {
+      const body = await response.json()
+      if (body?.error) message = body.error
+    } catch {
+      // not JSON, status line is all we have
+    }
+    throw new Error(message)
+  }
+
+  return response.status === 204 ? null : response.json()
+}
+
 // services api
 
 export const listServices = () => request('/api/service')
@@ -41,15 +58,32 @@ export const updateService = (id, input) =>
 export const deleteService = (id) =>
   request(`/api/service/${id}`, { method: 'DELETE' })
 
-export const listSightings = () => request('/api/sightings')
+// categories api
 
-export const getSighting = (id) => request(`/api/sightings/${id}`)
+export const listCategories = () => request('/api/category')
 
-export const createSighting = (input) =>
-  request('/api/sightings', { method: 'POST', body: JSON.stringify(input) })
+export const getCategory = (id) => request(`/api/category/${id}`)
 
-export const updateSighting = (id, input) =>
-  request(`/api/sightings/${id}`, { method: 'PUT', body: JSON.stringify(input) })
+export const createCategory = (input) =>
+  request('/api/category', { method: 'POST', body: JSON.stringify(input) })
 
-export const deleteSighting = (id) =>
-  request(`/api/sightings/${id}`, { method: 'DELETE' })
+export const updateCategory = (id, input) =>
+  request(`/api/category/${id}`, { method: 'PUT', body: JSON.stringify(input) })
+
+export const deleteCategory = (id) =>
+  request(`/api/category/${id}`, { method: 'DELETE' })
+
+// artworks api
+
+export const listArtworks = () => request('/api/artwork')
+
+export const getArtwork = (id) => request(`/api/artwork/${id}`)
+
+export const createArtwork = (input) =>
+  request('/api/artwork', { method: 'POST', body: input })
+
+export const updateArtwork = (id, input) =>
+  request(`/api/artwork/${id}`, { method: 'PUT', body: input })
+
+export const deleteArtwork = (id) =>
+  request(`/api/artwork/${id}`, { method: 'DELETE' })

@@ -34,4 +34,14 @@ export const {
   createService,
   updateService,
   deleteService,
+  listCategories,
+  getCategory,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  listArtworks,
+  getArtwork,
+  createArtwork,
+  updateArtwork,
+  deleteArtwork
 } = implementation
