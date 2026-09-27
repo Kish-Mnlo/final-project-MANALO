@@ -1,5 +1,8 @@
 import express from 'express'
 import cors from 'cors'
+import multer from 'multer'
+import path from 'path'
+import fs, { existsSync } from 'fs'
 import { pool } from './db/pool.js'
 import * as category from './categoryRepo.js'
 import * as artwork from './artworksRepo.js'
@@ -20,6 +23,25 @@ const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173')
 
 app.use(cors({ origin: allowedOrigins }))
 app.use(express.json({ limit: '100kb' }))
+
+// handle the file uploading
+
+const UPLOADS_DIR = path.join(process.cwd(), 'uploads')
+if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR)
+
+app.use('/uploads', express.static(UPLOADS_DIR))
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, UPLOADS_DIR);
+  },
+  filename: (req, file, cb) => {
+    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}.png`
+    cb(null, unique)
+  }
+})
+
+const upload = multer({ storage });
 
 // Is the process alive?
 app.get('/healthz', (request, response) => {
@@ -208,33 +230,63 @@ app.get('/api/artwork/:id', async (req, res, next) => {
 })
 
 app.post('/api/artwork', async (req, res, next) => {
-  const { errors, value } = validateArtwork(req.body ?? {})
-  if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+  upload.single('image')(req, res, async (uploadError) => {
+    if (uploadError) return res.status(400).json({ error: uploadError.message })
+    if (!req.file) return res.status(400).json({ error: 'image is required' })
 
-  try {
-    res.status(201).json(await artwork.create(pool, value))
-  } catch (error) {
-    next(error)
-  }
+    const { errors, value } = validateArtwork(req.body ?? {})
+    if (errors.length > 0) {
+      fs.unlinkSync(req.file.path)
+      return res.status(400).json({ error: errors.join('; ') })
+    }
+    try {
+      res.status(201).json(await artwork.create(pool, { ...value, image_path: req.file.filename}))
+    } catch (error) {
+      fs.unlinkSync(req.file.path)
+      next(error)
+    }
+  })
 })
 
 app.put('/api/artwork/:id', async (req, res, next) => {
-  const { errors, value } = validateArtwork(req.body ?? {})
-  if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+  upload.single('image')(req, res, async (uploadError) => {
+    if (uploadError) return res.status(400).json({ error: uploadError.message })
+    if (!req.file) return res.status(400).json({ error: 'image is required' })
+    
+    const { errors, value } = validateArtwork(req.body ?? {})
+    if (errors.length > 0) {
+      fs.unlinkSync(req.file.path)
+      return res.status(400).json({ error: errors.join('; ') })
+    }
 
-  try {
-    const row = await artwork.update(pool, req.params.id, value)
-    if (!row) return res.status(404).json({ error: 'Not found' })
-    response.json(row)
-  } catch (error) {
-    next(error)
-  }
+    try {
+      const imagePath = req.file ? req.file.filename : exsiting.image_path
+      const row = await artwork.update(pool, req.params.id, { ...value, imagePath})
+      if (!row) return res.status(404).json({ error: 'Not found' })
+      
+      // removes the old image once its been replaced
+      if (req.file && existing.image_path) {
+        const oldPath = path.join(UPLOADS_DIR, existing.image_path)
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath)
+      }
+      res.json(row)
+    } catch (error) {
+      fs.unlinkSync(req.file.path)
+      next(error)
+    }
+  })
 })
 
 app.delete('/api/artwork/:id', async (req, res, next) => {
   try {
+    const existing = await artwork.getById(pool, req.params.id)
+    if (!existing) return res.status(404).json({ error: 'Not found' })
+    
     const removed = await artwork.remove(pool, req.params.id)
-    if (!removed) return res.status(404).json({ error: 'Not found' })
+
+    const imagePath = path.join(UPLOADS_DIR, existing.image_path)
+    if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath)
+    
     res.status(204).end()
   } catch (error) {
     next(error)
