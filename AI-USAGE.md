@@ -35,7 +35,7 @@ At least six entries. One per real use. Every entry needs a commit link.
 - **What I asked for: how to do the front-end with adding, updating, editing, and deleting of services cards**
 - **What it gave back: The edited versions of the styles.css and commissions.jsx files to incorporate the api and gether the info from the serviceSeed.json**
 - **What I kept, what I changed, and why: I kept the essentials of the form and basically changed the design of it all. The css of course to fit the theme.**
-- **Commit:** 
+- **Commit:** https://github.com/Kish-Mnlo/final-project-MANALO/commit/26d789a4cdae63f25d05a71cc057dc4e3e94fd65
 
 ## 2. Where the AI got it wrong
 
@@ -48,6 +48,13 @@ scores zero.
 - **What was wrong with it:**
 - **What I did instead:**
 - **Commit:** https://github.com/YOUR-USERNAME/YOUR-REPO/commit/SHA
+
+### Case 1 - Create the Front-end for Services
+
+- **What it gave me: It gave me three seperate files for the front end which included the Service card, the service form, and the actual return for the commission.jsx file.**
+- **What was wrong with it: I didn't want to have three seperate files and the two were components used by the commission.jsx file anyway. I thought it would add clutter to the files.**
+- **What I did instead: I combined the three instead and had all of them inside commission.jsx to be able to group them easily.**
+- **Commit:** https://github.com/Kish-Mnlo/final-project-MANALO/commit/26d789a4cdae63f25d05a71cc057dc4e3e94fd65
 
 ## 3. Who wrote what
 
@@ -71,9 +78,9 @@ it in your own words.
 - **Commit:** https://github.com/Kish-Mnlo/final-project-MANALO/commit/f9411a92b7495f5f1af622cf102f278fd509789f
 - **What it does and why it is built this way: This is for the queries for the service table. It is the same way with the sightings example and was used as a template.**
 
-- **File:**
+- **File: server.js**
 - **Commit:**
-- **What it does and why it is built this way:**
+- **What it does and why it is built this way: I edited the template from the sightings to create all routes for the three tables, created validation functions for all three table bodies, and I also added middleware called multer to handle the file uploads for the image which I followed tutorials to be able to add.**
 
 - **File:**
 - **Commit:**
