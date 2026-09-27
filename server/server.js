@@ -260,9 +260,11 @@ app.put('/api/artwork/:id', async (req, res, next) => {
     }
 
     try {
-      const imagePath = req.file ? req.file.filename : exsiting.image_path
+      const existing = await artwork.getById(pool, req.params.id)
+      if (!existing) return res.status(404).json({ error: 'Not found' })
+      const imagePath = req.file ? req.file.filename : existing.image_path
+      
       const row = await artwork.update(pool, req.params.id, { ...value, imagePath})
-      if (!row) return res.status(404).json({ error: 'Not found' })
       
       // removes the old image once its been replaced
       if (req.file && existing.image_path) {
