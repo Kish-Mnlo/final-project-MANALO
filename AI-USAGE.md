@@ -37,6 +37,18 @@ At least six entries. One per real use. Every entry needs a commit link.
 - **What I kept, what I changed, and why: I kept the essentials of the form and basically changed the design of it all. The css of course to fit the theme.**
 - **Commit:** https://github.com/Kish-Mnlo/final-project-MANALO/commit/26d789a4cdae63f25d05a71cc057dc4e3e94fd65
 
+### 2026-09-27 - Create the Front-end for Artworks
+
+- **Tool: Claude**
+- **What I asked for: 
+  1. Categories are shown and can be pressed to filter each artwork depending on their category id
+  2. One edit categories button that can be pressed and opens a form where it can select which category to edit, to add category, or delete category
+  3. This is also where artworks are shown which are only image cards, these image cards can be pressed to pop up its information, and also have buttons to edit or delete.
+  4. Next to the edit categories button, an add artwork button is also present to add artworks**
+- **What it gave back: A full edit of Artwork.jsx including all the features along with the css to match.**
+- **What I kept, what I changed, and why: There are some features that are not working such as the delete category not working.**
+- **Commit:** https://github.com/YOUR-USERNAME/YOUR-REPO/commit/SHA
+
 ## 2. Where the AI got it wrong
 
 Three cases. Be specific. If you write that the AI was never wrong, this section
@@ -55,6 +67,13 @@ scores zero.
 - **What was wrong with it: I didn't want to have three seperate files and the two were components used by the commission.jsx file anyway. I thought it would add clutter to the files.**
 - **What I did instead: I combined the three instead and had all of them inside commission.jsx to be able to group them easily.**
 - **Commit:** https://github.com/Kish-Mnlo/final-project-MANALO/commit/26d789a4cdae63f25d05a71cc057dc4e3e94fd65
+
+### Case 2 - Create the Front-end for Artworks
+
+- **What it gave me: It was able to give me the edited file for Artwork.jsx alongside its css.**
+- **What was wrong with it: Some features I asked for weren't working such as the delete category feature.**
+- **What I did instead: I edited it since the delete category function was missing that it should be comparing strings.**
+- **Commit:** 
 
 ## 3. Who wrote what
 
