@@ -62,15 +62,17 @@ app.get('/readyz', async (request, response) => {
 
 // Validation lives on the server because the client can be bypassed. The
 // browser form is for a fast, friendly message; this is for correctness.
-async function validateCategory(body) {
+async function validateCategory(pool, body) {
   const errors = []
   const category_name = typeof body.category_name === 'string' ? body.category_name.trim() : ''
 
-  const existing = await category.getByName(pool, body.category_name)
-  if (existing.rows.length > 0) errors.push('Category name already exists.')
-  if (!category_name) errors.push('Name is required.')
-
-    return { errors, value: { category_name } }
+  if (!category_name) {
+    errors.push('Name is required.')
+  } else {
+    const existing = await category.getByName(pool, category_name)
+    if (existing) errors.push('Category name already exists.')
+  }
+  return { errors, value: { category_name } }
 }
 
 async function validateArtwork(body) {
@@ -122,10 +124,9 @@ app.get('/api/category/:id', async (req, res, next) => {
 })
 
 app.post('/api/category', async (req, res, next) => {
-  const { errors, value } = validateCategory(request.body ?? {})
-  if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
-
   try {
+    const { errors, value } = await validateCategory(pool, req.body ?? {})
+    if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
     res.status(201).json(await category.create(pool, value))
   } catch (error) {
     next(error)
@@ -133,7 +134,7 @@ app.post('/api/category', async (req, res, next) => {
 })
 
 app.put('/api/category/:id', async (req, res, next) => {
-  const { errors, value } = validateCategory(req.body ?? {})
+  const { errors, value } = await validateCategory(req.body ?? {})
   if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
 
   try {
@@ -176,7 +177,7 @@ app.get('/api/service/:id', async (req, res, next) => {
 })
 
 app.post('/api/service', async (req, res, next) => {
-  const { errors, value } = validateService(request.body ?? {})
+  const { errors, value } = validateService(req.body ?? {})
   if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
 
   try {
@@ -234,7 +235,7 @@ app.post('/api/artwork', async (req, res, next) => {
     if (uploadError) return res.status(400).json({ error: uploadError.message })
     if (!req.file) return res.status(400).json({ error: 'image is required' })
 
-    const { errors, value } = validateArtwork(req.body ?? {})
+    const { errors, value } = await validateArtwork(req.body ?? {})
     if (errors.length > 0) {
       fs.unlinkSync(req.file.path)
       return res.status(400).json({ error: errors.join('; ') })
@@ -253,7 +254,7 @@ app.put('/api/artwork/:id', async (req, res, next) => {
     if (uploadError) return res.status(400).json({ error: uploadError.message })
     if (!req.file) return res.status(400).json({ error: 'image is required' })
     
-    const { errors, value } = validateArtwork(req.body ?? {})
+    const { errors, value } = await validateArtwork(req.body ?? {})
     if (errors.length > 0) {
       fs.unlinkSync(req.file.path)
       return res.status(400).json({ error: errors.join('; ') })
@@ -273,7 +274,7 @@ app.put('/api/artwork/:id', async (req, res, next) => {
       }
       res.json(row)
     } catch (error) {
-      fs.unlinkSync(req.file.path)
+      if (req.file) fs.unlinkSync(req.file.path)
       next(error)
     }
   })

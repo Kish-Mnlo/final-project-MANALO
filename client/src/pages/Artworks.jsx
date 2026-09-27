@@ -328,12 +328,12 @@ export default function Artworks() {
 
   async function handleUpdateCategory(id, input) {
     const updated = await updateCategory(id, input)
-    setCategories((prev) => prev.map((c) => (c.id === updated.id ? updated : c)))
+    setCategories((prev) => prev.map((c) => (String(c.id) === String(updated.id) ? updated : c)))
   }
 
   async function handleDeleteCategory(id) {
     await deleteCategory(id)
-    setCategories((prev) => prev.filter((c) => c.id !== id))
+    setCategories((prev) => prev.filter((c) => String(c.id) !== String(id)))
     if (String(activeCategory) === String(id)) setActiveCategory(ALL_CATEGORIES)
   }
 
