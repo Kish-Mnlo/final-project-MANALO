@@ -22,23 +22,23 @@ export async function getById(pool, id) {
     return result.rows[0] ?? null
 }
 
-export async function create(pool, { name, description }) {
+export async function create(pool, { name, description, image_path }) {
     const result = await pool.query(
-        `INSERT INTO service (name, description)
-         VALUES ($1, $2)
+        `INSERT INTO service (name, description, image_path)
+         VALUES ($1, $2, $3)
          RETURNING *`,
-        [name, description]
+        [name, description, image_path]
     )
     return result.rows[0]
 }
 
-export async function update(pool, id, { name, description }) {
+export async function update(pool, id, { name, description, image_path }) {
     const result = await pool.query(
         `UPDATE service
-        SET name = $1, description = $2
-        WHERE id = $3
+        SET name = $1, description = $2, image_path = $3
+        WHERE id = $4
         RETURNING *`,
-        [name, description, id]
+        [name, description, image_path, id]
     )
 
     return result.rows[0] ?? null

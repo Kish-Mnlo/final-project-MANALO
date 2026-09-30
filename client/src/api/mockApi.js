@@ -174,20 +174,42 @@ export async function getService(id) {
   return found
 }
 
-export async function createService(input) {
+export async function createService(formData) {
   await delay()
   const rows = read(SERVICE_KEY, serviceSeed)
-  const created = { ...input, id: nextId(rows) }
+
+  const file = formData.get('image')
+  if (!file || file.size === 0) throw new Error('image is required')
+
+  const image_path = await fileToDataUrl(file)
+
+  const created = {
+    id: nextId(rows),
+    name: formData.get('name'),
+    description: formData.get('description') ?? '',
+    image_path,
+  }
+
   write(SERVICE_KEY, [...rows, created])
   return created
 }
 
-export async function updateService(id, input) {
+export async function updateService(id, formData) {
   await delay()
   const rows = read(SERVICE_KEY, serviceSeed)
   const index = rows.findIndex((row) => String(row.id) === String(id))
   if (index === -1) throw new Error('Not found')
-  rows[index] = { ...rows[index], ...input }
+
+  const file = formData.get('image')
+  const image_path = file && file.size > 0 ? await fileToDataUrl(file) : rows[index].image_path
+
+  rows[index] = {
+    ...rows[index],
+    name: formData.get('name'),
+    description: formData.get('description') ?? '',
+    image_path,
+  }
+
   write(SERVICE_KEY, rows)
   return rows[index]
 }

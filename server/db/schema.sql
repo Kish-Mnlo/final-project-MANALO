@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS artwork (
 CREATE TABLE IF NOT EXISTS service (
   id          SERIAL PRIMARY KEY,
   name        TEXT        NOT NULL,
-  description TEXT        NOT NULL DEFAULT ''
+  description TEXT        NOT NULL DEFAULT '',
+  image_path  TEXT        NOT NULL
 );
 
 -- The list page always sorts newest first. Without this the database reads

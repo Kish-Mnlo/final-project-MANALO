@@ -177,33 +177,66 @@ app.get('/api/service/:id', async (req, res, next) => {
 })
 
 app.post('/api/service', async (req, res, next) => {
-  const { errors, value } = validateService(req.body ?? {})
-  if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+  upload.single('image')(req, res, async (uploadError) => {
+    if (uploadError) return res.status(400).json({ error: uploadError.message })
+    if (!req.file) return res.status(400).json({ error: 'image is required' })
+    
+    const { errors, value } = validateService(req.body ?? {})
+    if (errors.length > 0) {
+      fs.unlinkSync(req.file.path)
+      return res.status(400).json({ error: errors.join('; ') })
+    }
 
-  try {
-    res.status(201).json(await service.create(pool, value))
-  } catch (error) {
-    next(error)
-  }
+    try {
+      res.status(201).json(await service.create(pool, { ...value, image_path: req.file.filename}))
+    } catch (error) {
+      fs.unlinkSync(req.file.path)
+      next(error)
+    }
+  })
 })
 
 app.put('/api/service/:id', async (req, res, next) => {
-  const { errors, value } = validateService(req.body ?? {})
-  if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+  upload.single('image')(req, res, async (uploadError) => {
+    if (uploadError) return res.status(400).json({ error: uploadError.message })
+    if (!req.file) return res.status(400).json({ error: 'image is required' })
+    
+    const { errors, value } = await validateService(req.body ?? {})
+    if (errors.length > 0) {
+      fs.unlinkSync(req.file.path)
+      return res.status(400).json({ error: errors.join('; ') })
+    }
 
-  try {
-    const row = await service.update(pool, req.params.id, value)
-    if (!row) return res.status(404).json({ error: 'Not found' })
-    res.json(row)
-  } catch (error) {
-    next(error)
-  }
+    try {
+      const existing = await service.getById(pool, req.params.id)
+      if (!existing) return res.status(404).json({ error: 'Not found' })
+      const imagePath = req.file ? req.file.filename : existing.image_path
+      
+      const row = await service.update(pool, req.params.id, { ...value, imagePath})
+      
+      // removes the old image once its been replaced
+      if (req.file && existing.image_path) {
+        const oldPath = path.join(UPLOADS_DIR, existing.image_path)
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath)
+      }
+      res.json(row)
+    } catch (error) {
+      if (req.file) fs.unlinkSync(req.file.path)
+      next(error)
+    }
+  })
 })
 
 app.delete('/api/service/:id', async (req, res, next) => {
   try {
+    const existing = await service.getById(pool, req.params.id)
+    if (!existing) return res.status(404).json({ error: 'Not found' })
+    
     const removed = await service.remove(pool, req.params.id)
-    if (!removed) return res.status(404).json({ error: 'Not found' })
+
+    const imagePath = path.join(UPLOADS_DIR, existing.image_path)
+    if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath)
+    
     res.status(204).end()
   } catch (error) {
     next(error)

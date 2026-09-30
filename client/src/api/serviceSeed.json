@@ -1,4 +1,4 @@
 [
-  { "id": "1", "name": "Character Commission", "description": "A single character, full color." },
-  { "id": "2", "name": "Sketch Card", "description": "Quick black-and-white sketch." }
+  { "id": 1, "name": "Character Commission", "description": "A single character, full color.", "image_path": "" },
+  { "id": 2, "name": "Sketch Card", "description": "Quick black-and-white sketch.", "image_path": "" }
 ]

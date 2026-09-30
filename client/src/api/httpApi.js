@@ -50,10 +50,10 @@ export const listServices = () => request('/api/service')
 export const getService = (id) => request(`/api/service/${id}`)
 
 export const createService = (input) =>
-  request('/api/service', { method: 'POST', body: JSON.stringify(input) })
+  request('/api/service', { method: 'POST', body: input })
 
 export const updateService = (id, input) =>
-  request(`/api/service/${id}`, { method: 'PUT', body: JSON.stringify(input) })
+  request(`/api/service/${id}`, { method: 'PUT', body: input })
 
 export const deleteService = (id) =>
   request(`/api/service/${id}`, { method: 'DELETE' })
