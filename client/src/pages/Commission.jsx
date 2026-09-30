@@ -1,12 +1,20 @@
-// src/pages/Commission.jsx
 import { useEffect, useState } from 'react'
 import { listServices, createService, updateService, deleteService } from '../api'
 
 function ServiceCard({ service, onEdit, onDelete }) {
   return (
     <article className="service-card">
-      <h3>{service.name}</h3>
-      <p>{service.description}</p>
+      <span className="service-card__title">{service.name}</span>
+      <span className="service-card__description">{service.description}</span>
+
+      <div className="service-card__output">
+        {service.image_path ? (
+          <img src={service.image_path} alt={service.name} />
+        ) : (
+          <span className="service-card__output-hint">No image yet</span>
+        )}
+      </div>
+
       <div className="service-card__actions">
         <button className="btn btn--ghost" onClick={() => onEdit(service)}>
           Edit
@@ -20,21 +28,41 @@ function ServiceCard({ service, onEdit, onDelete }) {
 }
 
 function ServiceForm({ service, onClose, onSubmit }) {
+  const isEditing = Boolean(service)
   const [name, setName] = useState(service?.name ?? '')
   const [description, setDescription] = useState(service?.description ?? '')
+  const [file, setFile] = useState(null)
+  const [preview, setPreview] = useState(service?.image_path ?? null)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  const isEditing = Boolean(service)
+  function handleFileChange(e) {
+    const selected = e.target.files?.[0]
+    if (!selected) return
+    if (selected.type !== 'image/png') {
+      setError('Please choose a .png file.')
+      return
+    }
+    setError('')
+    setFile(selected)
+    setPreview(URL.createObjectURL(selected))
+  }
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (!isEditing && !file) return setError('An image (PNG) is required.')
     if (!name.trim()) return setError('Name is required.')
+    if (!description.trim()) return setError('Description is required.')
+
+    const formData = new FormData()
+    if (file) formData.append('image', file)
+    formData.append('name', name.trim())
+    formData.append('description', description.trim())
 
     setSubmitting(true)
     setError('')
     try {
-      await onSubmit({ name: name.trim(), description: description.trim() })
+      await onSubmit(formData)
     } catch (err) {
       setError(err.message || 'Something went wrong.')
       setSubmitting(false)
@@ -50,6 +78,15 @@ function ServiceForm({ service, onClose, onSubmit }) {
         </div>
 
         <form onSubmit={handleSubmit} className="modal__form">
+          <label className="dropzone">
+            {preview ? (
+              <img src={preview} alt="Preview" />
+            ) : (
+              <span className="dropzone__hint">Click to choose a PNG file</span>
+            )}
+            <input type="file" accept="image/png" onChange={handleFileChange} hidden />
+          </label>
+
           <label className="field">
             <span>Name</span>
             <input
@@ -118,12 +155,12 @@ export default function Commission() {
     setFormOpen(true)
   }
 
-  async function handleSubmit(values) {
+  async function handleSubmit(formData) {
     if (editingService) {
-      const updated = await updateService(editingService.id, values)
+      const updated = await updateService(editingService.id, formData)
       setServices((prev) => prev.map((s) => (s.id === updated.id ? updated : s)))
     } else {
-      const created = await createService(values)
+      const created = await createService(formData)
       setServices((prev) => [created, ...prev])
     }
     setFormOpen(false)
@@ -150,19 +187,40 @@ export default function Commission() {
 
       {loading && <p className="status">Loading services…</p>}
       {loadError && <p className="status status--error">{loadError}</p>}
-      {!loading && !loadError && services.length === 0 && (
-        <p className="status">No services yet — add the first one.</p>
-      )}
 
-      <div className="service-grid">
-        {services.map((service) => (
-          <ServiceCard
-            key={service.id}
-            service={service}
-            onEdit={openEditForm}
-            onDelete={handleDelete}
-          />
-        ))}
+      <div className="commission-columns">
+        <div className="commission-column">
+          <span className="commission-column__title">Services</span>
+
+          {!loading && !loadError && services.length === 0 && (
+            <p className="status">No services yet — add the first one.</p>
+          )}
+
+          {services.length > 0 && (
+            <div className="service-grid">
+              {services.map((service) => (
+                <ServiceCard
+                  key={service.id}
+                  service={service}
+                  onEdit={openEditForm}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="commission-column">
+          <span className="commission-column__title commission-column__title--terms">
+            Terms of Service
+          </span>
+          <ul className="terms-list">
+            <li>Placeholder term — replace with your real terms.</li>
+            <li>Placeholder term — replace with your real terms.</li>
+            <li>Placeholder term — replace with your real terms.</li>
+            <li>Placeholder term — replace with your real terms.</li>
+          </ul>
+        </div>
       </div>
 
       {formOpen && (

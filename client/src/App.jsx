@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { Routes, Route } from "react-router-dom"
 import Navbar from './Navbar'
 import Home from './pages/Home'
@@ -19,7 +18,6 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </div>
-      <Footer />
     </>
   )
 }

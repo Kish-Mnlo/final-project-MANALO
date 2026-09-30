@@ -375,11 +375,13 @@ export default function Artworks() {
         <p className="status">Nothing here yet.</p>
       )}
 
-      <div className="artwork-grid">
-        {visibleArtworks.map((artwork) => (
-          <ArtworkCard key={artwork.id} artwork={artwork} onOpen={setSelectedArtwork} />
-        ))}
-      </div>
+      {visibleArtworks.length > 0 && (
+        <div className="artwork-grid">
+          {visibleArtworks.map((artwork) => (
+            <ArtworkCard key={artwork.id} artwork={artwork} onOpen={setSelectedArtwork} />
+          ))}
+        </div>
+      )}
 
       {selectedArtwork && (
         <ArtworkDetailModal
