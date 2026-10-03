@@ -68,7 +68,7 @@ async function validateArtwork(body) {
   const errors = []
   const name = typeof body.name === 'string' ? body.name.trim() : ''
   const category_id = Number(body.category_id)
-  const date_made = typeof body.date_made === 'string' ? /^\d{4}-\d{2}-\d{2}$/.test(date_made) : ''
+  const date_made = typeof body.date_made === 'string' ? body.date_made.trim() : ''
   const description =
     typeof body.description === 'string' ? body.description.trim() : ''
   
