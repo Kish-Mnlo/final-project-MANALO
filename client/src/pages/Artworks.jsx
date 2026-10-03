@@ -5,6 +5,15 @@ import {
 } from '../api'
 import { useAuth } from '../AuthContext'
 
+function formatDate(date) {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
 function ArtworkCard({ artwork, onOpen }) {
   return (
     <button className="artwork-card" onClick={() => onOpen(artwork)}>
@@ -28,7 +37,7 @@ function ArtworkDetailModal({ artwork, category, onClose, onEdit, onDelete, isAd
           <dt>Category</dt>
           <dd>{category?.category_name ?? 'Unknown'}</dd>
           <dt>Date made</dt>
-          <dd>{artwork.date_made}</dd>
+          <dd>{formatDate(artwork.date_made)}</dd>
           {artwork.description && (
             <>
               <dt>Description</dt>
