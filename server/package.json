@@ -14,8 +14,12 @@
     "node": ">=20"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
     "cors": "^2.8.5",
+    "dotenv": "^18.0.5",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.4.0",
     "pg": "^8.13.1"
   }
 }

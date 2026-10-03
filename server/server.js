@@ -1,12 +1,13 @@
+import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import multer from 'multer'
-import path from 'path'
-import fs, { existsSync } from 'fs'
 import { pool } from './db/pool.js'
 import * as category from './categoryRepo.js'
 import * as artwork from './artworksRepo.js'
 import * as service from './serviceRepo.js'
+import { login, requireAdmin } from './auth.js'
+import { uploadImage, deleteImage } from './supabaseStorage.js'
 
 const app = express()
 
@@ -26,22 +27,10 @@ app.use(express.json({ limit: '100kb' }))
 
 // handle the file uploading
 
-const UPLOADS_DIR = path.join(process.cwd(), 'uploads')
-if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR)
-
-app.use('/uploads', express.static(UPLOADS_DIR))
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, UPLOADS_DIR);
-  },
-  filename: (req, file, cb) => {
-    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}.png`
-    cb(null, unique)
-  }
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB, adjust as needed
 })
-
-const upload = multer({ storage });
 
 // Is the process alive?
 app.get('/healthz', (request, response) => {
@@ -103,6 +92,8 @@ async function validateService(body) {
     return { errors, value: { name, description } }
 }
 
+app.post('/api/login', login)
+
 // category routes
 
 app.get('/api/category', async (req, res, next) => {
@@ -123,7 +114,7 @@ app.get('/api/category/:id', async (req, res, next) => {
   }
 })
 
-app.post('/api/category', async (req, res, next) => {
+app.post('/api/category', requireAdmin, async (req, res, next) => {
   try {
     const { errors, value } = await validateCategory(pool, req.body ?? {})
     if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
@@ -133,8 +124,8 @@ app.post('/api/category', async (req, res, next) => {
   }
 })
 
-app.put('/api/category/:id', async (req, res, next) => {
-  const { errors, value } = await validateCategory(req.body ?? {})
+app.put('/api/category/:id', requireAdmin, async (req, res, next) => {
+  const { errors, value } = await validateCategory(pool, req.body ?? {})
   if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
 
   try {
@@ -146,7 +137,7 @@ app.put('/api/category/:id', async (req, res, next) => {
   }
 })
 
-app.delete('/api/category/:id', async (req, res, next) => {
+app.delete('/api/category/:id', requireAdmin, async (req, res, next) => {
   try {
     const removed = await category.remove(pool, req.params.id)
     if (!removed) return res.status(404).json({ error: 'Not found' })
@@ -176,67 +167,61 @@ app.get('/api/service/:id', async (req, res, next) => {
   }
 })
 
-app.post('/api/service', async (req, res, next) => {
+app.post('/api/service', requireAdmin, (req, res, next) => {
   upload.single('image')(req, res, async (uploadError) => {
     if (uploadError) return res.status(400).json({ error: uploadError.message })
     if (!req.file) return res.status(400).json({ error: 'image is required' })
-    
-    const { errors, value } = validateService(req.body ?? {})
-    if (errors.length > 0) {
-      fs.unlinkSync(req.file.path)
-      return res.status(400).json({ error: errors.join('; ') })
-    }
 
     try {
-      res.status(201).json(await service.create(pool, { ...value, image_path: req.file.filename}))
+      const { errors, value } = await validateService(req.body ?? {})
+      if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+
+      const { url } = await uploadImage(req.file)
+      const created = await service.create(pool, { ...value, image_path: url })
+      res.status(201).json(created)
     } catch (error) {
-      fs.unlinkSync(req.file.path)
       next(error)
     }
   })
 })
 
-app.put('/api/service/:id', async (req, res, next) => {
+app.put('/api/service/:id', requireAdmin, (req, res, next) => {
   upload.single('image')(req, res, async (uploadError) => {
     if (uploadError) return res.status(400).json({ error: uploadError.message })
-    if (!req.file) return res.status(400).json({ error: 'image is required' })
-    
-    const { errors, value } = await validateService(req.body ?? {})
-    if (errors.length > 0) {
-      fs.unlinkSync(req.file.path)
-      return res.status(400).json({ error: errors.join('; ') })
-    }
 
     try {
+      const { errors, value } = await validateService(req.body ?? {})
+      if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+
       const existing = await service.getById(pool, req.params.id)
       if (!existing) return res.status(404).json({ error: 'Not found' })
-      const imagePath = req.file ? req.file.filename : existing.image_path
-      
-      const row = await service.update(pool, req.params.id, { ...value, imagePath})
-      
-      // removes the old image once its been replaced
+
+      let image_path = existing.image_path
+      if (req.file) {
+        const { url } = await uploadImage(req.file)
+        image_path = url
+      }
+
+      const row = await service.update(pool, req.params.id, { ...value, image_path })
+
       if (req.file && existing.image_path) {
-        const oldPath = path.join(UPLOADS_DIR, existing.image_path)
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath)
+        await deleteImage(existing.image_path)
       }
       res.json(row)
     } catch (error) {
-      if (req.file) fs.unlinkSync(req.file.path)
       next(error)
     }
   })
 })
 
-app.delete('/api/service/:id', async (req, res, next) => {
+app.delete('/api/service/:id', requireAdmin, async (req, res, next) => {
   try {
     const existing = await service.getById(pool, req.params.id)
     if (!existing) return res.status(404).json({ error: 'Not found' })
-    
-    const removed = await service.remove(pool, req.params.id)
 
-    const imagePath = path.join(UPLOADS_DIR, existing.image_path)
-    if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath)
-    
+    await service.remove(pool, req.params.id)
+    await deleteImage(existing.image_path)
+
     res.status(204).end()
   } catch (error) {
     next(error)
@@ -263,66 +248,61 @@ app.get('/api/artwork/:id', async (req, res, next) => {
   }
 })
 
-app.post('/api/artwork', async (req, res, next) => {
+app.post('/api/artwork', requireAdmin, (req, res, next) => {
   upload.single('image')(req, res, async (uploadError) => {
     if (uploadError) return res.status(400).json({ error: uploadError.message })
     if (!req.file) return res.status(400).json({ error: 'image is required' })
 
-    const { errors, value } = await validateArtwork(req.body ?? {})
-    if (errors.length > 0) {
-      fs.unlinkSync(req.file.path)
-      return res.status(400).json({ error: errors.join('; ') })
-    }
     try {
-      res.status(201).json(await artwork.create(pool, { ...value, image_path: req.file.filename}))
+      const { errors, value } = await validateArtwork(req.body ?? {})
+      if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+
+      const { url } = await uploadImage(req.file)
+      const created = await artwork.create(pool, { ...value, image_path: url })
+      res.status(201).json(created)
     } catch (error) {
-      fs.unlinkSync(req.file.path)
       next(error)
     }
   })
 })
 
-app.put('/api/artwork/:id', async (req, res, next) => {
+app.put('/api/artwork/:id', requireAdmin, (req, res, next) => {
   upload.single('image')(req, res, async (uploadError) => {
     if (uploadError) return res.status(400).json({ error: uploadError.message })
-    if (!req.file) return res.status(400).json({ error: 'image is required' })
-    
-    const { errors, value } = await validateArtwork(req.body ?? {})
-    if (errors.length > 0) {
-      fs.unlinkSync(req.file.path)
-      return res.status(400).json({ error: errors.join('; ') })
-    }
 
     try {
+      const { errors, value } = await validateArtwork(req.body ?? {})
+      if (errors.length > 0) return res.status(400).json({ error: errors.join('; ') })
+
       const existing = await artwork.getById(pool, req.params.id)
       if (!existing) return res.status(404).json({ error: 'Not found' })
-      const imagePath = req.file ? req.file.filename : existing.image_path
-      
-      const row = await artwork.update(pool, req.params.id, { ...value, imagePath})
-      
-      // removes the old image once its been replaced
+
+      let image_path = existing.image_path
+      if (req.file) {
+        const { url } = await uploadImage(req.file)
+        image_path = url
+      }
+
+      const row = await artwork.update(pool, req.params.id, { ...value, image_path })
+
       if (req.file && existing.image_path) {
-        const oldPath = path.join(UPLOADS_DIR, existing.image_path)
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath)
+        await deleteImage(existing.image_path)
       }
       res.json(row)
     } catch (error) {
-      if (req.file) fs.unlinkSync(req.file.path)
       next(error)
     }
   })
 })
 
-app.delete('/api/artwork/:id', async (req, res, next) => {
+app.delete('/api/artwork/:id', requireAdmin, async (req, res, next) => {
   try {
     const existing = await artwork.getById(pool, req.params.id)
     if (!existing) return res.status(404).json({ error: 'Not found' })
-    
-    const removed = await artwork.remove(pool, req.params.id)
 
-    const imagePath = path.join(UPLOADS_DIR, existing.image_path)
-    if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath)
-    
+    await artwork.remove(pool, req.params.id)
+    await deleteImage(existing.image_path)
+
     res.status(204).end()
   } catch (error) {
     next(error)
@@ -342,7 +322,7 @@ app.use((error, request, response, next) => {
 
 // The host chooses the port and tells you through PORT. Hardcoding 3000 is the
 // commonest reason a first deploy is marked unhealthy and killed.
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 4000
 
 app.listen(port, () => {
   console.log(`API listening on http://localhost:${port}`)
