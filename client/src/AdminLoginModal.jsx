@@ -8,27 +8,33 @@ export default function AdminLoginModal({ onClose }) {
   const [submitting, setSubmitting] = useState(false)
 
   async function handleSubmit(e) {
-    e.preventDefault()
-    setSubmitting(true)
-    setError('')
-    try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      })
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}))
-        throw new Error(body.error || 'Incorrect password')
-      }
-      const { token } = await res.json()
-      login(token)
-      onClose()
-    } catch (err) {
-      setError(err.message)
-      setSubmitting(false)
+  e.preventDefault()
+  setSubmitting(true)
+  setError('')
+
+  try {
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+
+    const res = await fetch(`${API_BASE}/api/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    })
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      throw new Error(body.error || 'Incorrect password')
     }
+
+    const { token } = await res.json()
+
+    login(token)
+    onClose()
+  } catch (err) {
+    setError(err.message)
+    setSubmitting(false)
   }
+}
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
