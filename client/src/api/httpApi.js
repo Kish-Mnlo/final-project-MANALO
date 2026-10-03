@@ -43,6 +43,12 @@ async function requestForm(path, options) {
   return response.status === 204 ? null : response.json()
 }
 
+function authHeaders() {
+  const token = localStorage.getItem('final-project:admin-token')
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+
 // services api
 
 export const listServices = () => request('/api/service')
@@ -50,13 +56,13 @@ export const listServices = () => request('/api/service')
 export const getService = (id) => request(`/api/service/${id}`)
 
 export const createService = (input) =>
-  request('/api/service', { method: 'POST', body: input })
+  requestForm('/api/service', { method: 'POST', body: input, headers: authHeaders()})
 
 export const updateService = (id, input) =>
-  request(`/api/service/${id}`, { method: 'PUT', body: input })
+  requestForm(`/api/service/${id}`, { method: 'PUT', body: input, headers: authHeaders() })
 
 export const deleteService = (id) =>
-  request(`/api/service/${id}`, { method: 'DELETE' })
+  requestForm(`/api/service/${id}`, { method: 'DELETE', headers: authHeaders() })
 
 // categories api
 
@@ -65,13 +71,13 @@ export const listCategories = () => request('/api/category')
 export const getCategory = (id) => request(`/api/category/${id}`)
 
 export const createCategory = (input) =>
-  request('/api/category', { method: 'POST', body: JSON.stringify(input) })
+  request('/api/category', { method: 'POST', body: JSON.stringify(input), headers: authHeaders() })
 
 export const updateCategory = (id, input) =>
-  request(`/api/category/${id}`, { method: 'PUT', body: JSON.stringify(input) })
+  request(`/api/category/${id}`, { method: 'PUT', body: JSON.stringify(input), headers: authHeaders() })
 
 export const deleteCategory = (id) =>
-  request(`/api/category/${id}`, { method: 'DELETE' })
+  request(`/api/category/${id}`, { method: 'DELETE', headers: authHeaders() })
 
 // artworks api
 
@@ -80,10 +86,10 @@ export const listArtworks = () => request('/api/artwork')
 export const getArtwork = (id) => request(`/api/artwork/${id}`)
 
 export const createArtwork = (input) =>
-  request('/api/artwork', { method: 'POST', body: input })
+  requestForm('/api/artwork', { method: 'POST', body: input, headers: authHeaders() })
 
 export const updateArtwork = (id, input) =>
-  request(`/api/artwork/${id}`, { method: 'PUT', body: input })
+  requestForm(`/api/artwork/${id}`, { method: 'PUT', body: input, headers: authHeaders() })
 
 export const deleteArtwork = (id) =>
-  request(`/api/artwork/${id}`, { method: 'DELETE' })
+  requestForm(`/api/artwork/${id}`, { method: 'DELETE', headers: authHeaders() })

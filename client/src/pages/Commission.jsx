@@ -1,28 +1,35 @@
 import { useEffect, useState } from 'react'
 import { listServices, createService, updateService, deleteService } from '../api'
+import { useAuth } from '../AuthContext'
 
-function ServiceCard({ service, onEdit, onDelete }) {
+function ServiceCard({ service, onEdit, onDelete, isAdmin }) {
   return (
     <article className="service-card">
-      <span className="service-card__title">{service.name}</span>
-      <span className="service-card__description">{service.description}</span>
+      <div className="service-card__main">
+        <div className="service-card__text">
+          <span className="service-card__title">{service.name}</span>
+          <p className="service-card__description">{service.description}</p>
+        </div>
 
-      <div className="service-card__output">
-        {service.image_path ? (
-          <img src={service.image_path} alt={service.name} />
-        ) : (
-          <span className="service-card__output-hint">No image yet</span>
-        )}
+        <div className="service-card__output">
+          {service.image_path ? (
+            <img src={service.image_path} alt={service.name} />
+          ) : (
+            <span className="service-card__output-hint">No image yet</span>
+          )}
+        </div>
       </div>
 
-      <div className="service-card__actions">
-        <button className="btn btn--ghost" onClick={() => onEdit(service)}>
-          Edit
-        </button>
-        <button className="btn btn--danger" onClick={() => onDelete(service.id)}>
-          Delete
-        </button>
-      </div>
+      {isAdmin && (
+        <div className="service-card__actions">
+          <button className="btn btn--ghost" onClick={() => onEdit(service)}>
+            Edit
+          </button>
+          <button className="btn btn--danger" onClick={() => onDelete(service.id)}>
+            Delete
+          </button>
+        </div>
+      )}
     </article>
   )
 }
@@ -123,6 +130,7 @@ function ServiceForm({ service, onClose, onSubmit }) {
 }
 
 export default function Commission() {
+  const { isAdmin } = useAuth()
   const [services, setServices] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
@@ -180,9 +188,11 @@ export default function Commission() {
     <section>
       <header className="topbar">
         <h2>Commission Services</h2>
-        <button className="btn btn--primary" onClick={openAddForm}>
-          + Add service
-        </button>
+        {isAdmin && (
+          <button className="btn btn--primary" onClick={openAddForm}>
+            + Add service
+          </button>
+        )}
       </header>
 
       {loading && <p className="status">Loading services…</p>}
@@ -193,7 +203,7 @@ export default function Commission() {
           <span className="commission-column__title">Services</span>
 
           {!loading && !loadError && services.length === 0 && (
-            <p className="status">No services yet — add the first one.</p>
+            <p className="status">No services yet{isAdmin ? ' — add the first one.' : '.'}</p>
           )}
 
           {services.length > 0 && (
@@ -204,6 +214,7 @@ export default function Commission() {
                   service={service}
                   onEdit={openEditForm}
                   onDelete={handleDelete}
+                  isAdmin={isAdmin}
                 />
               ))}
             </div>
@@ -223,7 +234,7 @@ export default function Commission() {
         </div>
       </div>
 
-      {formOpen && (
+      {isAdmin && formOpen && (
         <ServiceForm
           service={editingService}
           onClose={() => setFormOpen(false)}

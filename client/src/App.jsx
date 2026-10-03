@@ -4,11 +4,12 @@ import Home from './pages/Home'
 import Artworks from './pages/Artworks'
 import Commission from './pages/Commission'
 import Contact from './pages/Contact'
-import Footer from './Footer'
+import { AuthProvider } from './AuthContext'
 
 export default function App() {
   return (
     <>
+    <AuthProvider>
       <Navbar />
       <div className="container">
         <Routes>
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </div>
+    </AuthProvider>
     </>
   )
 }

@@ -3,6 +3,7 @@ import {
   listArtworks, createArtwork, updateArtwork, deleteArtwork,
   listCategories, createCategory, updateCategory, deleteCategory
 } from '../api'
+import { useAuth } from '../AuthContext'
 
 function ArtworkCard({ artwork, onOpen }) {
   return (
@@ -12,7 +13,7 @@ function ArtworkCard({ artwork, onOpen }) {
   )
 }
 
-function ArtworkDetailModal({ artwork, category, onClose, onEdit, onDelete }) {
+function ArtworkDetailModal({ artwork, category, onClose, onEdit, onDelete, isAdmin }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
@@ -36,14 +37,16 @@ function ArtworkDetailModal({ artwork, category, onClose, onEdit, onDelete }) {
           )}
         </dl>
 
-        <div className="modal__actions">
-          <button className="btn btn--danger" onClick={() => onDelete(artwork.id)}>
-            Delete
-          </button>
-          <button className="btn btn--primary" onClick={() => onEdit(artwork)}>
-            Edit
-          </button>
-        </div>
+        {isAdmin && (
+          <div className="modal__actions">
+            <button className="btn btn--danger" onClick={() => onDelete(artwork.id)}>
+              Delete
+            </button>
+            <button className="btn btn--primary" onClick={() => onEdit(artwork)}>
+              Edit
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -250,6 +253,7 @@ function CategoryManagerModal({ categories, onClose, onAdd, onUpdate, onDelete }
 const ALL_CATEGORIES = 'all'
 
 export default function Artworks() {
+  const { isAdmin } = useAuth()
   const [artworks, setArtworks] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
@@ -341,14 +345,16 @@ export default function Artworks() {
     <section>
       <header className="topbar">
         <h2>Artworks</h2>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button className="btn btn--ghost" onClick={() => setCategoryModalOpen(true)}>
-            Edit categories
-          </button>
-          <button className="btn btn--primary" onClick={openAddArtwork}>
-            + Add artwork
-          </button>
-        </div>
+        {isAdmin && (
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button className="btn btn--ghost" onClick={() => setCategoryModalOpen(true)}>
+              Edit categories
+            </button>
+            <button className="btn btn--primary" onClick={openAddArtwork}>
+              + Add artwork
+            </button>
+          </div>
+        )}
       </header>
 
       <nav className="filters">
@@ -390,10 +396,11 @@ export default function Artworks() {
           onClose={() => setSelectedArtwork(null)}
           onEdit={openEditArtwork}
           onDelete={handleDeleteArtwork}
+          isAdmin={isAdmin}
         />
       )}
 
-      {artworkFormOpen && (
+      {isAdmin && artworkFormOpen && (
         <ArtworkForm
           artwork={editingArtwork}
           categories={categories}
@@ -402,7 +409,7 @@ export default function Artworks() {
         />
       )}
 
-      {categoryModalOpen && (
+      {isAdmin && categoryModalOpen && (
         <CategoryManagerModal
           categories={categories}
           onClose={() => setCategoryModalOpen(false)}

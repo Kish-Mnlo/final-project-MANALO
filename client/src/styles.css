@@ -253,7 +253,21 @@ body {
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
+}
+
+.service-card__main {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.service-card__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0; /* lets long descriptions wrap instead of overflowing the flex item */
 }
 
 .service-card__title {
@@ -264,14 +278,23 @@ body {
   color: var(--cream-light);
   background: var(--maroon);
   padding: 0.3rem 0.9rem;
-  border-radius: 10px;
+  border-radius: 999px;
   align-self: flex-start;
+}
+
+.service-card__description {
+  font-size: 0.85rem;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.5;
 }
 
 .service-card__output {
   background: var(--placeholder-gray);
   border-radius: 4px;
+  width: 140px;
   aspect-ratio: 4 / 3;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -286,8 +309,8 @@ body {
 
 .service-card__output-hint {
   color: var(--cream-light);
-  font-size: 0.85rem;
-  padding: 0 1rem;
+  font-size: 0.75rem;
+  padding: 0 0.5rem;
   text-align: center;
 }
 
@@ -295,7 +318,6 @@ body {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
-  margin-top: auto;
 }
 
 .commission-columns {
@@ -574,33 +596,55 @@ body {
   font-size: 1.5rem;
   color: var(--maroon);
   cursor: pointer;
+  flex-shrink: 0;
+}
+
+.carousel__arrow:hover {
+  color: var(--maroon-dark);
 }
 
 .carousel__card {
   background: var(--placeholder-gray);
-  color: var(--cream-light);
   width: 220px;
-  height: 130px;
+  height: 165px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  font-weight: 600;
+}
+
+.carousel__card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .carousel__lines {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  max-width: 220px;
+  gap: 0.4rem;
+  max-width: 320px;
+  text-align: left;
 }
 
-.carousel__lines span {
-  height: 0.7rem;
-  background: var(--placeholder-gray);
-  opacity: 0.5;
-  border-radius: 999px;
+.carousel__title {
+  font-weight: 700;
+  color: var(--maroon-dark);
+  font-size: 1.05rem;
+}
+
+.carousel__meta {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.carousel__description {
+  font-size: 0.85rem;
+  color: var(--ink);
+  line-height: 1.4;
 }
 
 /* --- Contact page --- */
@@ -647,4 +691,18 @@ body {
   opacity: 0.6;
 }
 
+.nav__auth-btn {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--cream-light);
+  background: none;
+  border: none;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
 
+.nav__auth-btn:hover {
+  background-color: rgba(255, 248, 233, 0.15);
+}
