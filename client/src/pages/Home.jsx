@@ -2,6 +2,15 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listArtworks } from '../api'
 
+function formatDate(date) {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
 function ArtworkCarousel() {
   const [artworks, setArtworks] = useState([])
   const [index, setIndex] = useState(0)
@@ -57,7 +66,7 @@ function ArtworkCarousel() {
         <div className="carousel__lines" aria-live="polite">
           <span className="carousel__title">{current.name}</span>
           {current.date_made && (
-            <span className="carousel__meta">{current.date_made}</span>
+            <span className="carousel__meta">{formatDate(current.date_made)}</span>
           )}
           {current.description && (
             <span className="carousel__description">{current.description}</span>
