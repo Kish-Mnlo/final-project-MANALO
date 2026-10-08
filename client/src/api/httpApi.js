@@ -48,7 +48,6 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
-
 // services api
 
 export const listServices = () => request('/api/service')

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useMatch, useResolvedPath } from "react-router-dom"
 import { useAuth } from './AuthContext'
 import AdminLoginModal from './AdminLoginModal'
+import logoImg from './images/logo.png'
 
 export default function Navbar() {
     const { isAdmin, logout } = useAuth()
@@ -10,7 +11,7 @@ export default function Navbar() {
     return (
         <nav className="nav">
             <Link to="/" className="logo">
-                Logo
+                <img src={logoImg} alt="Logo" className="logo__img" />
             </Link>
             <ul>
                 <CustomLink to="/">About</CustomLink>
@@ -24,7 +25,7 @@ export default function Navbar() {
                         </button>
                     ) : (
                         <button className="nav__auth-btn" onClick={() => setLoginOpen(true)}>
-                            Login
+                            ✿
                         </button>
                     )}
                 </li>

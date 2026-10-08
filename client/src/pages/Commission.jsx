@@ -184,7 +184,7 @@ export default function Commission() {
     }
   }
 
-  return (
+    return (
     <section>
       <header className="topbar">
         <h2>Commission Services</h2>
@@ -195,12 +195,12 @@ export default function Commission() {
         )}
       </header>
 
-      {loading && <p className="status">Loading services…</p>}
-      {loadError && <p className="status status--error">{loadError}</p>}
-
       <div className="commission-columns">
         <div className="commission-column">
           <span className="commission-column__title">Services</span>
+
+          {loading && <p className="status">Loading services…</p>}
+          {loadError && <p className="status status--error">{loadError}</p>}
 
           {!loading && !loadError && services.length === 0 && (
             <p className="status">No services yet{isAdmin ? ' — add the first one.' : '.'}</p>
@@ -225,12 +225,86 @@ export default function Commission() {
           <span className="commission-column__title commission-column__title--terms">
             Terms of Service
           </span>
-          <ul className="terms-list">
-            <li>Placeholder term — replace with your real terms.</li>
-            <li>Placeholder term — replace with your real terms.</li>
-            <li>Placeholder term — replace with your real terms.</li>
-            <li>Placeholder term — replace with your real terms.</li>
-          </ul>
+          <p className="terms-subtitle">Please read carefully before commissioning.</p>
+
+          <section className="term-box">
+            <h3 className="terms-subheading">What I draw</h3>
+            <ul className="terms-list">
+              <li>Human characters</li>
+              <li>Anthropomorphic characters</li>
+              <li>Chibis</li>
+              <li>Fanart (For personal use)</li>
+              <li>LGBTQ+ pairings</li>
+              <li>Yumeships</li>
+            </ul>
+          </section>
+
+          <section className="term-box">
+            <h3 className="terms-subheading">What I don't draw</h3>
+            <ul className="terms-list">
+              <li>NSFW Content</li>
+              <li>Elderly and Mecha characters</li>
+              <li>Offensive themes related to sex, race or religion</li>
+              <li>Webcomic projects</li>
+              <li>Extreme gore or horror</li>
+            </ul>
+          </section>
+
+          <section className="term-box">
+            <h3 className="terms-subheading">References</h3>
+            <p className="terms-description">
+              Please refrain from sending links as references. Provide or attach images instead
+              to ensure that there is no hacking or phishing attempt.
+            </p>
+          </section>
+
+          <section className="term-box">
+            <h3 className="terms-subheading">Deadlines and Turnaround Time</h3>
+            <p className="terms-description">
+              My turndaround time is a week to a month depending on the complexity of the commissioned
+              artwork or illustration. You may set a deadline but please provide a reason.
+            </p>
+          </section>
+
+          <section className="term-box">
+            <h3 className="terms-subheading">Use & Credit</h3>
+            <p className="terms-description">
+              Please credit me when the artwork is used. You may use it for personal use
+              but commercial use is not allowed unless there is an agreement.
+            </p>
+          </section>
+
+          <section className="term-box">
+            <h3 className="terms-subheading">Payment</h3>
+            <p className="terms-description">
+              I take payments using Gcash and Kofi. Payments are needed before the work starts.
+            </p>
+          </section>
+
+          <section className="term-box">
+            <h3 className="terms-subheading">Refund and Revisions</h3>
+            <p className="terms-description">
+              After a sketch has been sent, there will be no more refunds. If I fail to complete
+              your commission in a month, a full refund will be issued. Revisions for minor fixes 
+              or missed details are allowed but the change of artwork entirely needs a new commission.
+            </p>
+          </section>
+
+          <section className="term-box">
+            <h3 className="terms-subheading">Communication</h3>
+            <p className="terms-description">
+              Communication will proceed in where you first contact me. If there is a preferred
+              area of contact, please tell me beforehand. Inform me if you want progress updates frequently,
+              rarely, or none at all.
+            </p>
+          </section>
+
+          <section className="term-box">
+            <h3 className="terms-subheading">Intellectual Property Rights</h3>
+            <p className="terms-description">
+              All artwork remains the intellectual property of the artist.
+            </p>
+          </section>
         </div>
       </div>
 
