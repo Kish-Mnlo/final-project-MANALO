@@ -6,9 +6,9 @@
 
 This is to showcase my artwork and commission services.
 
-**Live site:** https://github.com/Kish-Mnlo/final-project-MANALO
-**API:** https://your-api.onrender.com/healthz
-**Demo video:** (link)
+- **Live site:** https://final-project-manalo.onrender.com/
+- **API:** https://art-portfolio-backend-f7ga.onrender.com/healthz
+- **Demo video:** (link)
 
 > **This deployment is running in demo mode.** The interface is real; the backend
 > is simulated in your browser so the site works without a server. See
@@ -131,13 +131,53 @@ once against the hosted database.
 
 ## Project structure
 
-    client/          React front end, built by Vite
-      src/api/       ONE interface, two implementations, chosen by a variable
-      src/components/
-    server/          Express API
-      db/            pool, schema.sql, seed.sql, and a runner for them
-    compose.yml      only if you self-host
-    docs/            your planning documents and weekly reports
+```
+Project structure:
+└── kish-mnlo-final-project-manalo/
+    ├── README.md                  
+    ├── AI-USAGE.md                
+    ├── compose.yml
+    ├── LICENSE
+    ├── package.json
+    ├── .env.example
+    ├── client/
+    │   ├── index.html
+    │   ├── package.json
+    │   ├── vite.config.js
+    │   ├── .env.example
+    │   └── src/
+    │       ├── App.jsx
+    │       ├── Footer.jsx
+    │       ├── main.jsx
+    │       ├── Navbar.jsx
+    │       ├── styles.css
+    │       ├── api/
+    │       │   ├── artworkSeed.json
+    │       │   ├── categorySeed.json
+    │       │   ├── httpApi.js
+    │       │   ├── index.js
+    │       │   ├── mockApi.js
+    │       │   └── serviceSeed.json
+    │       └── pages/
+    │           ├── Artworks.jsx
+    │           ├── Commission.jsx
+    │           ├── Contact.jsx
+    │           └── Home.jsx
+    └── server/
+        ├── artworksRepo.js
+        ├── categoryRepo.js
+        ├── package.json
+        ├── server.js
+        ├── serviceRepo.js
+        ├── .env.example
+        └── db/
+            ├── pool.js
+            ├── run.js
+            ├── schema.sql
+            └── seed.sql
+
+
+```
 
 ## Architecture
 
@@ -146,9 +186,9 @@ where each one is hosted.
 
 ## What I would do next
 
-Three honest bullets. This paragraph is worth more than it looks.
 - Enhance the design of the website
-- Figure out more features to be added for interaction? Maybe add a queue 
+- Figure out more features to be added for interaction? Maybe add a queue
+- Be able to show more artworks for people to admire
 
 ## Author
 
@@ -158,4 +198,9 @@ CS - 403
 
 ## Licence
 
-MIT, see [LICENSE](LICENSE). Put your own name in it.
+MIT, see [LICENSE](LICENSE).
+
+## AI usage
+
+Link to the `AI-USAGE.md` in my project repository:
+https://github.com/Kish-Mnlo/final-project-MANALO/blob/main/AI-USAGE.md
