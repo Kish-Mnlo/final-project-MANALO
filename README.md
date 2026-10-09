@@ -165,8 +165,8 @@ The React client (Render) is the only thing visitors load. It talks to the Expre
 
 ## Author
 
-Manalo, Kisha Margarette B. 
-https://github.com/Kish-Mnlo 
+Manalo, Kisha Margarette B.  
+https://github.com/Kish-Mnlo  
 CS - 403
 
 ## Licence
