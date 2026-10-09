@@ -59,12 +59,6 @@ client is on Render, the API on Render, the database on Supabase.
     # set VITE_USE_MOCK_API=false
     npm run dev
 
-Check the API on its own before you blame the client:
-
-    curl http://localhost:3000/healthz     # is the process alive
-    curl http://localhost:3000/readyz      # is the database reachable
-    curl http://localhost:3000/api/sightings
-
 ## Environment variables
 
 | Name | Where | What it is |
