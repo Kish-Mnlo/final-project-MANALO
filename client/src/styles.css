@@ -776,15 +776,17 @@ body {
   background: var(--cream);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 1rem;
   padding: 2rem 1.5rem;
   border-radius: 24px;
 }
 
 .carousel__body {
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 2rem;
   min-width: 0;
 }
@@ -831,8 +833,11 @@ body {
 .carousel__lines {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 0.5rem;
-  max-width: 300px;
+  width: 300px;
+  min-height: 240px;
+  flex-shrink: 0;
   text-align: left;
 }
 
@@ -856,6 +861,10 @@ body {
   font-size: 0.9rem;
   color: var(--ink);
   line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .carousel__dots {
@@ -950,6 +959,8 @@ body {
   .carousel__lines {
     align-items: center;
     text-align: center;
+    width: 100%;
+    min-height: 9rem;
   }
 
   .carousel__meta {
