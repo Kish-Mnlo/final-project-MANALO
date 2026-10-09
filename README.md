@@ -158,10 +158,10 @@ The React client (Render) is the only thing visitors load. It talks to the Expre
 
 ## What I would do next
 
-**Add a unique landing page**: Create a landing page that can attract attention to the viewer.
-**Enhance Design**: Add more elements such as symbols or images around the website to make it look more friendly.
-**Add more interactables**: Figure out more features to be added for interaction such as a commission queue.
-**Draw more Artworks**: Be able to show more artworks for people to admire in the artwork gallery.
+- **Add a unique landing page**: Create a landing page that can attract attention to the viewer.
+- **Enhance Design**: Add more elements such as symbols or images around the website to make it look more friendly.
+- **Add more interactables**: Figure out more features to be added for interaction such as a commission queue.
+- **Draw more Artworks**: Be able to show more artworks for people to admire in the artwork gallery.
 
 ## Author
 
