@@ -1,62 +1,29 @@
-# Artwork Showcase Portfolio
-
-> **Replace this whole file.** It is a worked example of the README your project
-> will be graded from, not a file to leave as it is. Start with
-> [START-HERE.md](START-HERE.md).
+# The Sweet Layers of Art
 
 This is to showcase my artwork and commission services.
 
 - **Live site:** https://final-project-manalo.onrender.com/
 - **API:** https://art-portfolio-backend-f7ga.onrender.com/healthz
-- **Demo video:** (link)
+- **Demo video:** https://drive.google.com/file/d/1v-fEdrwKHwigeUz-dWM5YgmOjTSh0A2c/view?usp=sharing
 
-> **This deployment is running in demo mode.** The interface is real; the backend
-> is simulated in your browser so the site works without a server. See
-> [Demo mode](#demo-mode) below. Delete this quote once your API is live.
 
 ![A screenshot of the main screen](docs/assets/screenshot.png)
 
 ## What it does
 
-- Add an artwork to showcase
-- Browse every artwork added, newest first
-- Delete an artwork added
-- View commission services
+- Introduces me on the home page, with a carousel of my three most recent artworks
+- Browse every artwork added, newest first, and filter by category
+- Click an artwork to view the full, uncropped image with its details
+- Add, edit and delete artworks (admin only)
+- View commission services with example images, plus my terms of service
+- Add, edit and delete commission services (admin only)
+- Contact page with my email and social links
+- Admin login and logout from the navbar; visitors see a read-only site
 
 ## Built with
 
 React and Vite on the front end, Express and PostgreSQL on the back end. The
-client is on GitHub Pages, the API on (host), the database on (host).
-
-## Demo mode
-
-This repository can run two ways, chosen by one environment variable at **build**
-time.
-
-**Demo mode is the default.** Only the exact string `false` turns it off, so a
-forgotten or mistyped variable leaves you on the simulated backend with a visible
-notice rather than on a silently broken build.
-
-| `VITE_USE_MOCK_API` | What happens |
-| --- | --- |
-| unset, or `true` | The client answers its own requests from `localStorage`. No server, no database, nothing shared between visitors. This is what the template ships with, so the GitHub Pages link works on day one. |
-| `false` | The client calls the Express API at `VITE_API_BASE_URL`, which reads and writes real PostgreSQL. |
-
-**Demo mode is a starting point and a fallback, not a finished project.** Your
-finals submission is all three pieces deployed and talking to each other. Demo
-mode is there so you can build the interface in week one before the API exists,
-and so you have something to show if a free tier is asleep during your demo.
-
-GitHub Pages serves files and cannot run Node, so the API and the database can
-never live there. They go somewhere else:
-
-| Piece | Options |
-| --- | --- |
-| **API** | Render, Railway, Fly.io, Koyeb, a VPS, or [self-hosted behind a tunnel](../content/extending-your-app/11-self-hosting.md) |
-| **Database** | Neon, Supabase, Railway, Aiven, or your own PostgreSQL |
-
-`content/extending-your-app/` in your course workspace walks through all of it.
-Page 10 is the decision page if you do not know which to pick.
+client is on Render, the API on Render, the database on Supabase.
 
 ## Running it yourself
 
@@ -67,23 +34,28 @@ Page 10 is the decision page if you do not know which to pick.
     cp .env.example .env        # VITE_USE_MOCK_API stays true
     npm run dev                 # http://localhost:5173
 
-**The whole stack.** Needs a PostgreSQL, either local or hosted.
+**The whole stack.** 
+
+    Before Running the project, make sure you have:
+    Node.js
+    npm
+    A supabase project
+    A render project
 
     # 1. the database
-    docker run --name my-pg -e POSTGRES_PASSWORD=devpassword \
-      -e POSTGRES_DB=haunted -p 5432:5432 -d postgres:17
+    Create a supabase project and create a new bucket in storage with the name '/uploads'
+    This stores the images that the website uploads.
 
     # 2. the API
     cd server
     npm install
-    cp .env.example .env        # check DATABASE_URL
-    npm run db:reset            # creates the tables and adds sample rows
-    npm run dev                 # http://localhost:3000
+    cp .env.example .env        # check DATABASE_URL and input any missing values.
+    npm start
 
     # 3. the client, in another terminal
     cd client
     npm install
-    cp .env.example .env
+    cp .env.example .env        # Input any missing values and deploy the client into render for the links.
     # set VITE_USE_MOCK_API=false
     npm run dev
 
@@ -95,39 +67,47 @@ Check the API on its own before you blame the client:
 
 ## Environment variables
 
-None of these are committed. `.env.example` in each folder lists them with
-placeholder values.
-
 | Name | Where | What it is |
 | --- | --- | --- |
 | `DATABASE_URL` | server | PostgreSQL connection string. Contains a password |
 | `CORS_ORIGINS` | server | comma-separated origins allowed to call the API |
 | `NODE_ENV` | server | `production` on your host |
-| `PORT` | server | **set by the host**, do not set it yourself |
+| `ADMIN_PASSWORD` | server | Serves as the password for admin. Set it yourself. |
+| `JWT_SECRET` | server | A random string that serves as a password for tokens. Set it yourself. |
+| `SUPABASE_URL` | server | Find this in your supabase project. |
+| `SUPABASE_SERVICE_ROLE_KEY` | server | Find this in your supabase project. |
 | `VITE_USE_MOCK_API` | client, at build time | only `false` turns demo mode off; unset means on |
 | `VITE_API_BASE_URL` | client, at build time | your API's public URL, no trailing slash |
 
-Every `VITE_` value is compiled into the built JavaScript and is **public**.
-Never put a key, a password or a connection string in one.
 
 ## Deploying
 
-**Client, to GitHub Pages.** Already wired up in
-`.github/workflows/deploy-pages.yml`. Two one-time steps:
+**FRONT-END**
 
-1. **Settings > Pages > Build and deployment > Source: GitHub Actions.** Without
-   this the workflow goes green and publishes nothing.
-2. Nothing else, until your API is live. Demo mode is the default, so the first
-   deploy works on its own. When the API is up, add `VITE_USE_MOCK_API` = `false`
-   and `VITE_API_BASE_URL` under **Settings > Secrets and variables > Actions >
-   Variables**, then re-run the workflow.
+The React Front-end is deployed in Render.
 
-The repository must be **public** for Pages to serve it on a free account.
+1. Connect the github repository to render.
+2. Set the root directory to client.
+3. Configure the environment variables including the API URL.
+4. Deploy the project. Render will build the front end and re-deploy based on recent commits.
 
-**API and database.** Not automated here, because most hosts deploy straight from
-your repository with no workflow at all. Point your host at the `server/` folder,
-set the environment variables in its dashboard, and run `server/db/schema.sql`
-once against the hosted database.
+**BACK-END**
+
+The Express.js Back-end is deployed in Render.
+
+1. Connect the github repository to render.
+2. Set the root directory to client.
+3. Configure the environment variables including the Frontend URL and SUPABASE credentials.
+5. Deploy the project. Render will build the back-end and re-deploy based on recent commits.
+4. Ensure that the API is running using /healthz.
+
+**Database and Authentication**
+
+Supabase manages the application's database and authentication. You must configure the required database tables, authentication settings, and Row Level Security (RLS) policies in your Supabase project yourself.
+
+**Environment Variables**
+
+Keep environment variables and secret keys out of the repository. Configure them locally for development and in the appropriate hosting dashboards for deployment. Keep .env in gitignore.
 
 ## Project structure
 
@@ -140,7 +120,7 @@ Project structure:
     ├── LICENSE
     ├── package.json
     ├── .env.example
-    ├── client/
+    ├── client/                             # Houses the Front-end and includes the API.
     │   ├── index.html
     │   ├── package.json
     │   ├── vite.config.js
@@ -163,7 +143,7 @@ Project structure:
     │           ├── Commission.jsx
     │           ├── Contact.jsx
     │           └── Home.jsx
-    └── server/
+    └── server/                            # Houses the back-end.
         ├── artworksRepo.js
         ├── categoryRepo.js
         ├── package.json
@@ -176,19 +156,18 @@ Project structure:
             ├── schema.sql
             └── seed.sql
 
-
 ```
 
 ## Architecture
 
-Three or four sentences, or a small diagram. Which piece talks to which, and
-where each one is hosted.
+The React client (Render) is the only thing visitors load. It talks to the Express API over HTTP, and the API is the only piece that talks to PostgreSQL, through the repository files in server/ (artworks, categories and services). Image uploads go to the API along with the form data. In demo mode, the client's mockApi.js stands in for the API and keeps everything in the browser's localStorage, so the server and database are not needed.
 
 ## What I would do next
 
-- Enhance the design of the website
-- Figure out more features to be added for interaction? Maybe add a queue
-- Be able to show more artworks for people to admire
+**Add a unique landing page**: Create a landing page that can attract attention to the viewer.
+**Enhance Design**: Add more elements such as symbols or images around the website to make it look more friendly.
+**Add more interactables**: Figure out more features to be added for interaction such as a commission queue.
+**Draw more Artworks**: Be able to show more artworks for people to admire in the artwork gallery.
 
 ## Author
 
@@ -201,6 +180,7 @@ CS - 403
 MIT, see [LICENSE](LICENSE).
 
 ## AI usage
+- Assisted by ChatGPT
 
 Link to the `AI-USAGE.md` in my project repository:
 https://github.com/Kish-Mnlo/final-project-MANALO/blob/main/AI-USAGE.md
