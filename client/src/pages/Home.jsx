@@ -18,7 +18,7 @@ function ArtworkCarousel() {
 
   useEffect(() => {
     listArtworks()
-      .then(setArtworks)
+      .then((data) => setArtworks(data.slice(0, 3)))
       .catch(() => setArtworks([]))
       .finally(() => setLoading(false))
   }, [])

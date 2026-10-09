@@ -43,11 +43,13 @@ function ServiceForm({ service, onClose, onSubmit }) {
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
+  const ALLOWED_TYPES = ['image/png', 'image/jpeg']
+
   function handleFileChange(e) {
     const selected = e.target.files?.[0]
     if (!selected) return
-    if (selected.type !== 'image/png') {
-      setError('Please choose a .png file.')
+    if (!ALLOWED_TYPES.includes(selected.type)) {
+      setError('Please choose a .png or .jpg file.')
       return
     }
     setError('')
@@ -57,7 +59,7 @@ function ServiceForm({ service, onClose, onSubmit }) {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!isEditing && !file) return setError('An image (PNG) is required.')
+    if (!isEditing && !file) return setError('An image (PNG or JPG) is required.')
     if (!name.trim()) return setError('Name is required.')
     if (!description.trim()) return setError('Description is required.')
 
@@ -89,9 +91,9 @@ function ServiceForm({ service, onClose, onSubmit }) {
             {preview ? (
               <img src={preview} alt="Preview" />
             ) : (
-              <span className="dropzone__hint">Click to choose a PNG file</span>
+              <span className="dropzone__hint">Click to choose a PNG or JPG file</span>
             )}
-            <input type="file" accept="image/png" onChange={handleFileChange} hidden />
+            <input type="file" accept="image/png, image/jpeg" onChange={handleFileChange} hidden />
           </label>
 
           <label className="field">
