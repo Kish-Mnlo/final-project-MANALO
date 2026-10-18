@@ -7,34 +7,55 @@ export default function AdminLoginModal({ onClose }) {
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
+ 
   async function handleSubmit(e) {
-  e.preventDefault()
-  setSubmitting(true)
-  setError('')
+    e.preventDefault()
+    setSubmitting(true)
+    setError('')
 
-  try {
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+    try {
+      let token
 
-    const res = await fetch(`${API_BASE}/api/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
-    })
+      const useMockAPI =
+        import.meta.env.VITE_USE_MOCK_API !== 'false'
 
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}))
-      throw new Error(body.error || 'Incorrect password')
+      if (useMockAPI) {
+        // Demo login: no backend or database required.
+        const DEMO_PASSWORD = 'admin123'
+
+        if (password !== DEMO_PASSWORD) {
+          throw new Error('Incorrect password')
+        }
+
+        token = 'demo-admin-token'
+      } else {
+        // Real login: requires your Express API.
+        const API_BASE =
+          import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'
+
+        const res = await fetch(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password }),
+        })
+
+        const body = await res.json().catch(() => ({}))
+
+        if (!res.ok) {
+          throw new Error(body.error || 'Incorrect password')
+        }
+
+        token = body.token
+      }
+
+      login(token)
+      onClose()
+    } catch (err) {
+      setError(err.message || 'Login failed')
+    } finally {
+      setSubmitting(false)
     }
-
-    const { token } = await res.json()
-
-    login(token)
-    onClose()
-  } catch (err) {
-    setError(err.message)
-    setSubmitting(false)
   }
-}
 
   return (
     <div className="modal-backdrop" onClick={onClose}>

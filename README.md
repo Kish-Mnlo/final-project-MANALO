@@ -34,6 +34,8 @@ client is on Render, the API on Render, the database on Supabase.
     cp .env.example .env        # VITE_USE_MOCK_API stays true
     npm run dev                 # http://localhost:5173
 
+The admin password set in demo mode is admin123.
+
 **The whole stack.** 
 
     Before Running the project, make sure you have:
